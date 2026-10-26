@@ -1,62 +1,101 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.netology.javaqa.Radio;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RadioTest {
+
+    // 1. Проверка конструктора по умолчанию (10 станций)
     @Test
-    public void testStationLimits() {
+    public void testDefaultConstructor() {
         Radio radio = new Radio();
 
-        // 1. Проверка валидных значений
-        radio.setStationNumber(3);
-        assertEquals(3, radio.getRadioStationNumber());
-
-        // 2. Проверка невалидных значений
-        radio.setStationNumber(10);
-        assertEquals(3, radio.getRadioStationNumber()); // Осталось 3
-
-        radio.setStationNumber(-1);
-        assertEquals(3, radio.getRadioStationNumber()); // Осталось 3
-
-        // 3. Проверка перехода 9 -> 0
-        radio.setStationNumber(9);
-        radio.nextStationNumber();
-        assertEquals(0, radio.getRadioStationNumber());
-
-        // 4. Проверка перехода 0 -> 9
-        radio.setStationNumber(0);
-        radio.prevStationNumber();
-        assertEquals(9, radio.getRadioStationNumber());
+        // Количество станций = 10, значит maxStation = 9
+        Assertions.assertEquals(10, radio.getStationCount());
+        Assertions.assertEquals(0, radio.getCurrentStation());
+        Assertions.assertEquals(0, radio.getCurrentVolume());
     }
 
-
+    // 2. Проверка конструктора с кастомным количеством станций
     @Test
-    public void testRadioVolume() {
+    public void testCustomStationCount() {
+        // 30 станций -> последняя = 29
+        Radio radio = new Radio(30);
+
+        Assertions.assertEquals(30, radio.getStationCount());
+        Assertions.assertEquals(0, radio.getCurrentStation());
+    }
+
+    // 3. Проверка сеттера станции (границы)
+    @Test
+    public void testSetStationLimits() {
+        Radio radio = new Radio(10); // 0..9
+
+        // Валидное значение
+        radio.setCurrentStation(5);
+        Assertions.assertEquals(5, radio.getCurrentStation());
+
+        // Невалидное: больше максимума
+        radio.setCurrentStation(10);
+        Assertions.assertEquals(5, radio.getCurrentStation());
+
+        // Невалидное: меньше нуля
+        radio.setCurrentStation(-1);
+        Assertions.assertEquals(5, radio.getCurrentStation());
+    }
+
+    // 4. Проверка переключения next (включая циклический переход)
+    @Test
+    public void testNextStation() {
+        Radio radio = new Radio(10); // 0..9
+
+        // Обычный переход
+        radio.setCurrentStation(5);
+        radio.nextStation();
+        Assertions.assertEquals(6, radio.getCurrentStation());
+
+        // Переход с максимума на 0
+        radio.setCurrentStation(9);
+        radio.nextStation();
+        Assertions.assertEquals(0, radio.getCurrentStation());
+    }
+
+    // 5. Проверка переключения prev (включая циклический переход)
+    @Test
+    public void testPrevStation() {
+        Radio radio = new Radio(10); // 0..9
+
+        // Обычный переход
+        radio.setCurrentStation(5);
+        radio.prevStation();
+        Assertions.assertEquals(4, radio.getCurrentStation());
+
+        // Переход с 0 на максимум
+        radio.setCurrentStation(0);
+        radio.prevStation();
+        Assertions.assertEquals(9, radio.getCurrentStation());
+    }
+
+    // 6. Проверка громкости (границы)
+    @Test
+    public void testVolumeLimits() {
         Radio radio = new Radio();
 
-        radio.increaseVolume(); // 0 -> 1
-        assertEquals(1, radio.getRadioVolume());
+        // Увеличение до максимума
+        radio.setCurrentVolume(99);
+        radio.increaseVolume();
+        Assertions.assertEquals(100, radio.getCurrentVolume());
 
-        // 2. Проверка границы максимума (100)
-        radio.setRadioVolume(99); // Ставим 99
-        radio.increaseVolume();   // 99 -> 100
-        assertEquals(100, radio.getRadioVolume());
+        // Попытка превысить максимум
+        radio.increaseVolume();
+        Assertions.assertEquals(100, radio.getCurrentVolume());
 
-        radio.increaseVolume();   // Пытаемся сделать 101
-        assertEquals(100, radio.getRadioVolume()); // Должно остаться 100
+        // Уменьшение до минимума
+        radio.setCurrentVolume(1);
+        radio.decreaseVolume();
+        Assertions.assertEquals(0, radio.getCurrentVolume());
 
-        // 3. Проверка обычного уменьшения
-        radio.decreaseVolume();   // 100 -> 99
-        assertEquals(99, radio.getRadioVolume());
-
-        // 4. Проверка границы минимума (0)
-        radio.setRadioVolume(1);  // Ставим 1
-        radio.decreaseVolume();   // 1 -> 0
-        assertEquals(0, radio.getRadioVolume());
-
-        radio.decreaseVolume();   // Пытаемся сделать -1
-        assertEquals(0, radio.getRadioVolume()); // Должно остаться 0
+        // Попытка уйти ниже нуля
+        radio.decreaseVolume();
+        Assertions.assertEquals(0, radio.getCurrentVolume());
     }
 }
-

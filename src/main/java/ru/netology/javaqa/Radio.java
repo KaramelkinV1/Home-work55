@@ -1,66 +1,76 @@
 package ru.netology.javaqa;
 
 public class Radio {
-    private int radioStationNumber; //номер станции
-    private int radioVolume; //громкость радио
+    private int stationCount;
+    private int maxStation;
 
+    private int currentStation = 0;
+    private int currentVolume = 0;
+
+    private final int maxVolume = 100;
+    private final int minVolume = 0;
 
     public Radio() {
-        this.radioStationNumber = 0;
-        this.radioVolume = 0;
+        this.stationCount = 10;
+        this.maxStation = stationCount - 1; // 9
     }
 
-    public void setStationNumber(int level) { // настройка номера станции
-        if (level >= 0 && level <= 9) {
-            this.radioStationNumber = level;
+    public Radio(int stationCount) {
+        this.stationCount = stationCount;
+        this.maxStation = stationCount - 1;
+    }
+
+    public int getStationCount() {
+        return stationCount;
+    }
+
+    public int getCurrentStation() {
+        return currentStation;
+    }
+
+    public int getCurrentVolume() {
+        return currentVolume;
+    }
+
+    public void setCurrentStation(int newStation) {
+        // Проверка: от 0 до максимального номера включительно
+        if (newStation < 0 || newStation > maxStation) {
+            return;
         }
+        currentStation = newStation;
     }
 
-    //следующая станция
-    public void nextStationNumber() {
-        if (this.radioStationNumber == 9) {
-            this.radioStationNumber = 0; //
+    public void nextStation() {
+        if (currentStation == maxStation) {
+            currentStation = 0; // С последней на первую
         } else {
-            this.radioStationNumber = this.radioStationNumber + 1;
+            currentStation = currentStation + 1;
         }
     }
 
-    //предыдущая станция
-    public void prevStationNumber() {
-        if (this.radioStationNumber == 0) {
-            this.radioStationNumber = 9; //
+    public void prevStation() {
+        if (currentStation == 0) {
+            currentStation = maxStation; // С первой на последнюю
         } else {
-            this.radioStationNumber = this.radioStationNumber - 1;
+            currentStation = currentStation - 1;
         }
     }
 
-    //увеличить громкость
     public void increaseVolume() {
-        if (this.radioVolume < 100) {
-            this.radioVolume = this.radioVolume + 1;
+        if (currentVolume < maxVolume) {
+            currentVolume = currentVolume + 1;
         }
     }
 
-    //уменьшение громкость
     public void decreaseVolume() {
-        if (this.radioVolume > 0) {
-            this.radioVolume = this.radioVolume - 1;
+        if (currentVolume > minVolume) {
+            currentVolume = currentVolume - 1;
         }
     }
 
-    public int getRadioStationNumber() {
-        return radioStationNumber;
-    }
-
-    public int getRadioVolume() {
-        return radioVolume;
-    }
-
-    public void setRadioVolume(int volume) {
+    public void setCurrentVolume(int volume) {
         if (volume >= 0 && volume <= 100) {
-            this.radioVolume = volume;
+            this.currentVolume = volume; // <--- ВОТ ЭТА СТРОКА ДОЛЖНА БЫТЬ
         }
     }
-
-
 }
