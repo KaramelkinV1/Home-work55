@@ -33,7 +33,6 @@ public class Radio {
     }
 
     public void setCurrentStation(int newStation) {
-        // Проверка: от 0 до максимального номера включительно
         if (newStation < 0 || newStation > maxStation) {
             return;
         }
@@ -42,7 +41,7 @@ public class Radio {
 
     public void nextStation() {
         if (currentStation == maxStation) {
-            currentStation = 0; // С последней на первую
+            currentStation = 0;
         } else {
             currentStation = currentStation + 1;
         }
@@ -50,7 +49,7 @@ public class Radio {
 
     public void prevStation() {
         if (currentStation == 0) {
-            currentStation = maxStation; // С первой на последнюю
+            currentStation = maxStation;
         } else {
             currentStation = currentStation - 1;
         }
@@ -70,7 +69,7 @@ public class Radio {
 
     public void setCurrentVolume(int volume) {
         if (volume >= 0 && volume <= 100) {
-            this.currentVolume = volume; // <--- ВОТ ЭТА СТРОКА ДОЛЖНА БЫТЬ
+            this.currentVolume = volume;
         }
     }
 }
